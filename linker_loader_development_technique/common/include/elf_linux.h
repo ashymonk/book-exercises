@@ -3,13 +3,27 @@
 
 #include <elf.h>
 
-#if __x86_64__
+#if defined(__x86_64__)
 typedef Elf64_Ehdr Elf_Ehdr;
 typedef Elf64_Shdr Elf_Shdr;
-#else
+typedef Elf64_Phdr Elf_Phdr;
+typedef Elf64_Sym Elf_Sym;
+typedef Elf64_Rel Elf_Rel;
+# define ELF_CLASS ELFCLASS64
+#elif defined(__i386__)
 typedef Elf32_Ehdr Elf_Ehdr;
 typedef Elf32_Shdr Elf_Shdr;
-#endif /* __x86_64__ */
+typedef Elf32_Phdr Elf_Phdr;
+typedef Elf32_Sym Elf_Sym;
+typedef Elf32_Rel Elf_Rel;
+# define ELF_CLASS ELFCLASS32
+#endif
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+# define ELF_DATA ELFDATA2LSB
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+# define ELF_DATA ELFDATA2MSB
+#endif
 
 #define IS_ELF(ehdr) ( \
 	((ehdr).e_ident[EI_MAG0] == ELFMAG0) && \

@@ -1,16 +1,23 @@
 CC = gcc
-CPPFLAGS = -I../../common/include
+CPPFLAGS = -I../common/include
 CFLAGS = -Wall -Wextra
 LDFLAGS =
 LDLIBS =
+TARGET = elfsamp readsec elfread elfdump
 
 .PHONY: all clean
 
-all: elfsamp readsec
+all: $(TARGET)
 
 elfsamp: elfsamp.o main.o
 
 readsec: readsec.o
+
+elfread: elfread.o
+
+elfdump: elfdump.o
+
+test: test_elfsamp test_readsec test_elfread test_elfdump
 
 test_elfsamp: elfsamp
 	./elfsamp
@@ -20,5 +27,14 @@ test_readsec: elfsamp readsec
 	./readsec main.o
 	./readsec elfsamp
 
+test_elfread: elfread
+	echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+	./elfread
+	echo 2 | sudo tee /proc/sys/kernel/randomize_va_space
+
+test_elfdump: elfdump
+	./elfdump elfsamp.o
+	./elfdump elfsamp
+
 clean:
-	rm -f *.o elfsamp readsec
+	rm -f *.o $(TARGET)
