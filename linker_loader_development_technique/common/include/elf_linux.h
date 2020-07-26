@@ -10,6 +10,8 @@ typedef Elf64_Phdr Elf_Phdr;
 typedef Elf64_Sym Elf_Sym;
 typedef Elf64_Rel Elf_Rel;
 # define ELF_CLASS ELFCLASS64
+# define ELF_ST_TYPE(st_info) ELF64_ST_TYPE(st_info)
+# define ELF_R_SYM(r_info) ELF64_R_SYM(r_info)
 #elif defined(__i386__)
 typedef Elf32_Ehdr Elf_Ehdr;
 typedef Elf32_Shdr Elf_Shdr;
@@ -17,6 +19,8 @@ typedef Elf32_Phdr Elf_Phdr;
 typedef Elf32_Sym Elf_Sym;
 typedef Elf32_Rel Elf_Rel;
 # define ELF_CLASS ELFCLASS32
+# define ELF_ST_TYPE(st_info) ELF32_ST_TYPE(st_info)
+# define ELF_R_SYM(r_info) ELF32_R_SYM(r_info)
 #endif
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
