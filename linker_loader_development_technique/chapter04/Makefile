@@ -3,7 +3,7 @@ CPPFLAGS = -I../common/include
 CFLAGS = -Wall -Wextra
 LDFLAGS =
 LDLIBS =
-TARGET = const noconst const_b
+TARGET = const noconst const_b layer layer2_local edata initialize ctors constructor
 
 .PHONY: all clean
 
@@ -30,7 +30,28 @@ const_b: const_b.o const_sub.o
 	nm const_sub_b.o
 	gcc $(CPPFLAGS) $(CFLAGS) const_b.o const_sub_b.o -o $@
 
-test: test_const test_noconst test_to_static test_const_b
+layer: layer.o layer2.o layer_sub1.o layer_sub2.o
+	gcc $(CPPFLAGS) $(CFLAGS) layer.o layer_sub?.o -o $@
+	nm layer_sub1.o
+	nm layer_sub2.o
+	ld -r layer_sub1.o layer_sub2.o -o layer_lib.o
+	nm layer_lib.o
+	objcopy --localize-symbol=num layer_lib.o layer_lib_local.o
+	nm layer_lib_local.o
+	-gcc $(CPPFLAGS) $(CFLAGS) layer.o layer_lib_local.o -o $@_local
+	gcc $(CPPFLAGS) $(CFLAGS) layer2.o layer_lib_local.o -o $@2_local
+
+edata: edata.o
+	gcc $(CPPFLAGS) $(CFLAGS) $^ -o $@ -T elf_x86_64.xdwe.sdata
+
+initialize: initialize.o
+	gcc $(CPPFLAGS) $(CFLAGS) $^ -o $@ -T elf_x86_64.xdwe.sdata
+
+ctors: ctors.o
+
+constructor: constructor.o
+
+test: test_const test_noconst test_to_static test_const_b test_layer test_edata test_initialize test_ctors test_constructor
 
 test_const: const
 	-./const
@@ -43,3 +64,20 @@ test_to_static: const_local
 
 test_const_b: const_b
 	./const_b
+
+test_layer: layer
+	./layer
+	./layer2_local
+
+test_edata: edata
+	./edata
+	objdump -h edata
+
+test_initialize: initialize
+	./initialize
+
+test_ctors: ctors
+	./ctors
+
+test_constructor: constructor
+	./constructor
