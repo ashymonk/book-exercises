@@ -33,7 +33,7 @@ samp2_ar: main.o libsamp.a samp2d.o
 	ar rUc libsamp.a samp2.o
 	$(CC) $< -L. -lsamp -o $@
 
-test: test_readname test_ardump
+test: test_readname test_ardump test_link
 
 test_readname: readname
 	echo ABCD   > file15xxxxx.txt
