@@ -28,9 +28,9 @@ test_readsec: elfsamp readsec
 	./readsec elfsamp
 
 test_elfread: elfread
-	echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+	sudo sysctl kernel.randomize_va_space=0
 	./elfread
-	echo 2 | sudo tee /proc/sys/kernel/randomize_va_space
+	sudo sysctl kernel.randomize_va_space=2
 
 test_elfdump: elfdump
 	./elfdump elfsamp.o
